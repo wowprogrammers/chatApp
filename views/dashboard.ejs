@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Chat</title>
+        <link rel="stylesheet" href="dashStyle.css">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+	</head>
+	
+	<body>
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+        <div class="container bootstrap snippets bootdey">
+            <div class="tile tile-alt" id="messages-main">
+                <div class="ms-menu">
+                    <div class="ms-user clearfix">
+                        <!-- For Validation -->
+                        <% if(user) { %>
+                            <h5> <%= user.username  %>  </h5>
+                            <img src="Images/<%= user.userImage %>" alt="" class="img-avatar pull-left">
+                            <div>Signed in as <br> <%= user.email %></div>
+                       <% } %>
+                       
+                    </div class="ms-user clearfix">
+                    <div>
+                        <a href="/logout">Logout</a>
+                    </div>
+                    
+                    
+                    <div class="p-15">
+                        <div class="dropdown">
+                            <a class="btn btn-primary btn-block" href="" data-toggle="dropdown">Messages <i class="caret m-l-5"></i></a>
+            
+                            <ul class="dropdown-menu dm-icon w-100">
+                                <li><a href=""><i class="fa fa-envelope"></i> Messages</a></li>
+                                <li><a href=""><i class="fa fa-users"></i> Contacts</a></li>
+                                <li><a href=""><i class="fa fa-format-list-bulleted"> </i>Todo Lists</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="list-group lg-alt">
+                        <% 
+                            if(allUsers.length > 0) { 
+                             for(let i = 0;i<allUsers.length;i++) { %>
+                                <li class="list-group-item media user-list" data-id="<%= allUsers[i]['_id'] %>">
+                                    <div class="pull-left">
+                                        <img src="Images/<%= allUsers[i].userImage  %>" alt="" class="img-avatar">
+                                    </div>
+                                    <%
+
+                                    if(allUsers[i]["is_Online"] == 1 ) { %>
+                                        <sup class="online-status" id="<%= allUsers[i]['_id'] %>-status" >Online</sup>
+                                        <%
+
+                                    }else{ %>
+
+                                        <sup class="offline-status" id="<%= allUsers[i]['_id'] %>-status">Offline</sup>
+                                        <%
+                                    }
+
+
+                                    %>
+                                    <div class="media-body">
+                                          
+                                        <small class="list-group-item-heading"> <%= allUsers[i].username %> </small>
+                                    </div>
+                                    <small class="list-group-item-text c-gray"> <%= allUsers[i].email %> </small>
+                                </li>  
+                             <% }
+                            }
+
+                        %>
+                    </div>
+            
+                    
+                </div>
+                <!-- Chat Container  -->
+                <div class="ms-body" id="container">
+                    <div class="action-header clearfix">
+                        <div class="visible-xs" id="ms-menu-trigger">
+                            <!-- <i class="fa fa-bars"></i> -->
+                            
+                        </div>
+                        
+                        <div class="pull-left hidden-xs">
+                            <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="" class="img-avatar m-r-10 currentUserImage">
+                            <div class="lv-avatar pull-left">
+                                
+                            </div>
+                            <span class="currentUserName">David Parbell</span>
+                        </div>
+                         
+                        <ul class="ah-actions actions">
+                            <li>
+                                <a href="">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="">
+                                    <i class="fa fa-check"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="">
+                                    <i class="fa fa-clock-o"></i>
+                                </a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="" data-toggle="dropdown" aria-expanded="true">
+                                    <i class="fa fa-sort"></i>
+                                </a>
+                    
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li>
+                                        <a href="">Latest</a>
+                                    </li>
+                                    <li>
+                                        <a href="">Oldest</a>
+                                    </li>
+                                </ul>
+                            </li>                             
+                            <li class="dropdown">
+                                <a href="" data-toggle="dropdown" aria-expanded="true">
+                                    <i class="fa fa-bars"></i>
+                                </a>
+                    
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li>
+                                        <a href="">Refresh</a>
+                                    </li>
+                                    <li>
+                                        <a href="">Message Settings</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div id="msgContainer" >
+
+                    </div>
+                   
+                    
+                    <div class="msb-reply">
+                        <textarea placeholder="What's on your mind..." class="msgArea"></textarea>
+                        <button class="sendButton" ><i class="fa fa-paper-plane-o"></i></button>
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+        <script src="dashScript.js"></script>
+        <script>
+
+            let receiverId; //Global variable we can access anywhere
+            let senderId = '<%= user._id %>'
+            let socket = io('/userNameSpace', {
+                auth:{
+                    token:senderId
+                }
+            })
+
+            document.addEventListener('DOMContentLoaded',()=>{
+            let userList = document.querySelectorAll('.user-list');
+            userList.forEach(list =>{
+            list.addEventListener('click', ()=>{
+            receiverId = list.getAttribute('data-id');
+            // console.log(receiverId)
+            const clickedUserName = list.querySelector('.list-group-item-heading').textContent;
+            // console.log(clickedUserName);
+            const clickedUserImage = list.querySelector('.img-avatar').getAttribute('src');
+            // console.log(clickedUserImage);
+
+            let container = document.getElementById('container');
+            let currentUserName = document.querySelector('.currentUserName');
+            currentUserName.textContent =  clickedUserName;
+
+            let currentUserImage = document.querySelector('.currentUserImage');
+
+            currentUserImage.setAttribute('src',clickedUserImage);
+            container.style.display = "block";
+        })
+    })
+})  
+
+    // Save Chat Implementation
+
+    let sendButton = document.querySelector('.sendButton');
+    sendButton.addEventListener('click', ()=>{
+        let msgArea = document.querySelector('.msgArea');
+        let message = msgArea.value;
+        if(message.length > 0 ){
+            
+            fetch('/save-chat',{
+                method:"POST",
+                headers:{
+                    'Accept':'application/json',
+                    'Content-Type':'application/json'
+                },
+
+                body:JSON.stringify({
+                    senderId,
+                    receiverId,
+                    message
+                })
+
+
+            }).then(async response =>{
+                if(response){
+                    message.value = ''
+                    let res = await response.json();
+                    // console.log(res.data.message)
+                    let chat = res.data.message;
+                    
+                    console.log(chat)
+
+                    let currentDate = new Date();
+                    let year = currentDate.getFullYear();
+                    let date = currentDate.getDate();
+                    let month = currentDate.getMonth()+1;
+                    let hour = currentDate.getHours()%12;
+                    let minutes = currentDate.getMinutes()
+                    
+                    let html = `
+                    <div class="message-feed right">
+                        <div class="pull-right">
+                            <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="" class="img-avatar">
+                        </div>
+                        <div class="media-body">
+                            <div class="mf-content">
+                                `+chat+`
+                            </div>
+                            <small class="mf-date"><i class="fa fa-clock-o"></i> `+date+`/`+month+`/`+year+` at `+hour+`:`+minutes+`</small>
+                        </div>
+                    </div>
+                    `
+                    let container = document.getElementById('msgContainer');
+                    container.insertAdjacentHTML("beforebegin",html);
+                    socket.emit('newChat',res.data)
+                }
+            }).catch(error =>{
+                console.log(error.message)
+            })
+        }
+    })
+
+
+    // Distance user chat
+    socket.on('loadNewChat', function(data){
+
+        if(senderId === data.receiverId && receiverId === data.senderId){
+            let chat = data.message;
+            let currentDate = new Date();
+                    let year = currentDate.getFullYear();
+                    let date = currentDate.getDate();
+                    let month = currentDate.getMonth()+1;
+                    let hour = currentDate.getHours()%12;
+                    let minutes = currentDate.getMinutes()
+        let html = `
+                     <div class="message-feed media">
+                        <div class="pull-left">
+                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="img-avatar">
+                        </div>
+                        <div class="media-body">
+                            <div class="mf-content">
+                                `+chat+`
+                            </div>
+                            <small class="mf-date"><i class="fa fa-clock-o"></i> `+date+`/`+month+`/`+year+` at `+hour+`:`+minutes+`</small>
+                        </div>
+                     </div>
+        `;
+                    let container = document.getElementById('msgContainer');
+                    container.insertAdjacentHTML("beforebegin",html);
+
+        }
+       
+    });
+
+                    
+
+
+
+
+
+
+
+
+            // Updating status of "online" users
+
+            socket.on('getOnlineUsers',function(data){
+                $('#'+data.userId+'-status').text("Online");
+                $('#'+data.userId+'-status').removeClass("offline-status");
+                $('#'+data.userId+'-status').addClass("online-status");
+            })
+
+            // Updating status of "offline" users
+
+            socket.on('getOfflineUsers',function(data){
+                $('#'+data.userId+'-status').text("Offline");
+                $('#'+data.userId+'-status').addClass("offline-status");
+                $('#'+data.userId+'-status').removeClass("online-status");
+            })
+
+
+
+
+
+        </script>
+	</body>
+</html>
