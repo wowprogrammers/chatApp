@@ -49,15 +49,11 @@ userSpace.on('connection', async function(socketId){
         socketId.broadcast.emit('getOfflineUsers',{userId})
     })
 
-
-    // Chat Implementation
-
-    socketId.on('newChat', function(data){
-        console.log(data.message)
-        socketId.broadcast.emit('loadNewChat',data)
+    // Chat implementation
+    // Event listen
+    socketId.on('newChat',(data)=>{
+        socketId.broadcast.emit('loadNewChat',data); //New Event Fire(broadcast)
     })
-
-
 
 })
 

@@ -168,6 +168,8 @@
                 }
             })
 
+
+            let clickedUserImage; //To access in other part of program
             document.addEventListener('DOMContentLoaded',()=>{
             let userList = document.querySelectorAll('.user-list');
             userList.forEach(list =>{
@@ -176,7 +178,7 @@
             // console.log(receiverId)
             const clickedUserName = list.querySelector('.list-group-item-heading').textContent;
             // console.log(clickedUserName);
-            const clickedUserImage = list.querySelector('.img-avatar').getAttribute('src');
+            clickedUserImage = list.querySelector('.img-avatar').getAttribute('src');
             // console.log(clickedUserImage);
 
             let container = document.getElementById('container');
@@ -194,16 +196,16 @@
     // Save Chat Implementation
 
     let sendButton = document.querySelector('.sendButton');
-    sendButton.addEventListener('click', ()=>{
+    sendButton.addEventListener('click',()=>{
         let msgArea = document.querySelector('.msgArea');
         let message = msgArea.value;
-        if(message.length > 0 ){
-            
+        if(message.length > 0){
+
             fetch('/save-chat',{
                 method:"POST",
                 headers:{
-                    'Accept':'application/json',
-                    'Content-Type':'application/json'
+                    "Accept":"application/json",
+                    "Content-type":"application/json"
                 },
 
                 body:JSON.stringify({
@@ -211,28 +213,24 @@
                     receiverId,
                     message
                 })
-
-
             }).then(async response =>{
                 if(response){
-                    message.value = ''
                     let res = await response.json();
-                    // console.log(res.data.message)
                     let chat = res.data.message;
-                    
-                    console.log(chat)
-
+                    document.querySelector('.msgArea').value = '';
                     let currentDate = new Date();
                     let year = currentDate.getFullYear();
                     let date = currentDate.getDate();
-                    let month = currentDate.getMonth()+1;
+                    let month = currentDate.getMonth()+1; //0-11
                     let hour = currentDate.getHours()%12;
-                    let minutes = currentDate.getMinutes()
-                    
+                    let minutes = currentDate.getMinutes();
+
+                    console.log(chat)
+
                     let html = `
                     <div class="message-feed right">
                         <div class="pull-right">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="" class="img-avatar">
+                            <img src="Images/<%= user.userImage %>" alt="" class="img-avatar">
                         </div>
                         <div class="media-body">
                             <div class="mf-content">
@@ -242,10 +240,13 @@
                         </div>
                     </div>
                     `
-                    let container = document.getElementById('msgContainer');
-                    container.insertAdjacentHTML("beforebegin",html);
-                    socket.emit('newChat',res.data)
+
+                    let container =  document.getElementById('msgContainer');
+                    container.insertAdjacentHTML('beforebegin',html);
+
+                    socket.emit('newChat',res.data) //Event Fire
                 }
+
             }).catch(error =>{
                 console.log(error.message)
             })
@@ -253,21 +254,22 @@
     })
 
 
-    // Distance user chat
-    socket.on('loadNewChat', function(data){
+    // Distance user chat (Event Listen)
 
+    socket.on('loadNewChat', (data)=>{
         if(senderId === data.receiverId && receiverId === data.senderId){
             let chat = data.message;
+            document.querySelector('.msgArea').value = '';
             let currentDate = new Date();
-                    let year = currentDate.getFullYear();
-                    let date = currentDate.getDate();
-                    let month = currentDate.getMonth()+1;
-                    let hour = currentDate.getHours()%12;
-                    let minutes = currentDate.getMinutes()
-        let html = `
-                     <div class="message-feed media">
+            let year = currentDate.getFullYear();
+            let date = currentDate.getDate();
+            let month = currentDate.getMonth()+1; //0-11
+            let hour = currentDate.getHours()%12;
+            let minutes = currentDate.getMinutes();
+            let html = `
+            <div class="message-feed media">
                         <div class="pull-left">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="img-avatar">
+                            <img src="`+clickedUserImage+`" alt="" class="img-avatar">
                         </div>
                         <div class="media-body">
                             <div class="mf-content">
@@ -275,24 +277,19 @@
                             </div>
                             <small class="mf-date"><i class="fa fa-clock-o"></i> `+date+`/`+month+`/`+year+` at `+hour+`:`+minutes+`</small>
                         </div>
-                     </div>
-        `;
-                    let container = document.getElementById('msgContainer');
-                    container.insertAdjacentHTML("beforebegin",html);
+                    </div>
+            `;
+
+            let container = document.getElementById('msgContainer');
+            container.insertAdjacentHTML('beforebegin',html)
+
 
         }
-       
-    });
+    })
+
 
                     
-
-
-
-
-
-
-
-
+      
             // Updating status of "online" users
 
             socket.on('getOnlineUsers',function(data){
@@ -308,6 +305,13 @@
                 $('#'+data.userId+'-status').addClass("offline-status");
                 $('#'+data.userId+'-status').removeClass("online-status");
             })
+
+
+
+
+
+
+
 
 
 
