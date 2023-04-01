@@ -189,6 +189,10 @@
 
             currentUserImage.setAttribute('src',clickedUserImage);
             container.style.display = "block";
+
+            // Event fire
+            socket.emit('loadExistsChats',{senderId,receiverId})
+
         })
     })
 })  
@@ -242,7 +246,7 @@
                     `
 
                     let container =  document.getElementById('msgContainer');
-                    container.insertAdjacentHTML('beforebegin',html);
+                    container.insertAdjacentHTML('beforeend',html);
 
                     socket.emit('newChat',res.data) //Event Fire
                 }
@@ -281,14 +285,72 @@
             `;
 
             let container = document.getElementById('msgContainer');
-            container.insertAdjacentHTML('beforebegin',html)
+            container.insertAdjacentHTML('beforeend',html)
 
 
         }
     })
 
+        // Load Old Chat Front end
 
-                    
+        socket.on('loadOldChats',(data)=>{
+            let container = document.getElementById('msgContainer');
+            
+            console.log(container)
+
+            container.innerHTML = "";
+
+            console.log(container)
+            
+            let chats = data.chats;
+
+            let html = "";
+            let currentDate;
+            for(let i = 0;i<chats.length;i++){
+                currentDate = chats[i]['createdAt'];
+                currentDate = new Date(currentDate);
+                let year = currentDate.getFullYear();
+                let date = currentDate.getDate();
+                let month = currentDate.getMonth()+1; //0-11
+                let hour = currentDate.getHours()%12;
+                let minutes = currentDate.getMinutes();
+                let classOne = "";
+                let classTwo = "";
+                let imageLink;
+                if(chats[i]['senderId'] == senderId) { //current user chat
+                    classOne = "right";
+                    classTwo = "pull-right";
+                    imageLink = "Images/<%= user.userImage %>"
+
+                }else{  //distance user chat
+
+                    classOne = "media";
+                    classTwo = "pull-left";
+                    imageLink = clickedUserImage;
+                }
+               
+                html += `
+                <div class="message-feed `+classOne+`">
+                        <div class="`+classTwo+`">
+                            <img src="`+imageLink+`" alt="" class="img-avatar">
+                        </div>
+                        <div class="media-body">
+                            <div class="mf-content">
+                                `+chats[i]['message']+`
+                            </div>
+                            <small class="mf-date"><i class="fa fa-clock-o"></i> `+date+`/`+month+`/`+year+` at `+hour+`:`+minutes+`</small>
+                        </div>
+                    </div>
+                `
+            }
+            
+             
+            container.insertAdjacentHTML('beforeend',html);
+            // We want to put "inside" this(msgContainer) SO...
+
+        })
+
+
       
             // Updating status of "online" users
 

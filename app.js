@@ -33,6 +33,7 @@ app.use('/',userRoute)
 
 
 const User = require('./models/userModel');
+const Chat = require('./models/chatModel');
 // Sockets Configuration
 userSpace.on('connection', async function(socketId){
     console.log("User is online");
@@ -53,6 +54,21 @@ userSpace.on('connection', async function(socketId){
     // Event listen
     socketId.on('newChat',(data)=>{
         socketId.broadcast.emit('loadNewChat',data); //New Event Fire(broadcast)
+    })
+
+    // Load Old Chat implementation
+    socketId.on('loadExistsChats',async (data)=>{
+        let chats = await Chat.find({ $or :[
+            {
+                senderId:data.senderId,receiverId:data.receiverId
+            },
+            {
+                senderId:data.receiverId,receiverId:data.senderId
+            }
+        ]
+        })
+
+        socketId.emit('loadOldChats',{chats})
     })
 
 })
