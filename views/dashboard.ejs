@@ -247,7 +247,7 @@
 
                     let container =  document.getElementById('msgContainer');
                     container.insertAdjacentHTML('beforeend',html);
-
+                    scrollChat()
                     socket.emit('newChat',res.data) //Event Fire
                 }
 
@@ -287,7 +287,7 @@
             let container = document.getElementById('msgContainer');
             container.insertAdjacentHTML('beforeend',html)
 
-
+            scrollChat()
         }
     })
 
@@ -347,8 +347,16 @@
              
             container.insertAdjacentHTML('beforeend',html);
             // We want to put "inside" this(msgContainer) SO...
-
+            scrollChat()
+        
         })
+
+
+        function scrollChat(){
+            const msgContainer = document.getElementById('msgContainer');
+            msgContainer.scrollTop = msgContainer.offsetTop + msgContainer.scrollHeight;
+        }
+         
 
 
       
