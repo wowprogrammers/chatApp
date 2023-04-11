@@ -71,6 +71,17 @@ userSpace.on('connection', async function(socketId){
         socketId.emit('loadOldChats',{chats})
     })
 
+      // Delete Chat Socket Implementation
+    socketId.on("chatDeleted",(msgId)=>{
+        socketId.broadcast.emit("newChatDelete",msgId)
+    })
+
+    // Update chat socket
+
+    socketId.on("updatedChat",(data)=>{
+        socketId.broadcast.emit("newUpdateChat",data)
+    })
+  
 })
 
 

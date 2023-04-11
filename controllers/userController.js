@@ -107,4 +107,47 @@ const saveChat = async(req,res) =>{
     }
 }
 
-module.exports = {registerPage,register,loadLoginPage,login,loadDashBoardPage,logout,saveChat}
+const chatDelete = async(req,res)=>{
+    try {
+        const {msgId} = req.body;
+
+        let deletedChat = await Chat.findByIdAndDelete(msgId);
+        if(deletedChat){
+            res.status(200).json({success:true})
+        }
+        
+        
+    } catch (error) {
+        res.status(400).json({success:false,Error:error.message})
+    }
+}
+
+const updateChat = async(req,res)=>{
+    try {
+        const {msgId,message} = req.body;
+       let result = await Chat.findByIdAndUpdate(msgId,{
+            $set:{
+                message
+            }
+        })
+        if(result){
+            res.status(200).json({success:true})
+        }
+        
+    } catch (error) {
+        res.status(400).json({success:false})
+    }
+
+}
+
+module.exports = {
+    registerPage,
+    register,
+    loadLoginPage,
+    login,
+    loadDashBoardPage,
+    logout,
+    saveChat,
+    chatDelete,
+    updateChat
+}

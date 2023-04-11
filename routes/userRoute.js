@@ -31,4 +31,10 @@ userRoute.get('/logout',auth.isLogin,userController.logout);
 
 // save Chat route
 userRoute.post('/save-chat',userController.saveChat)
+
+// chat delete route
+userRoute.delete('/delete-chat',userController.chatDelete);
+
+// update chat route
+userRoute.put("/update-chat",userController.updateChat)
 module.exports = userRoute

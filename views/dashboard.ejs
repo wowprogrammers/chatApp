@@ -96,34 +96,32 @@
                             </div>
                             <span class="currentUserName">David Parbell</span>
                         </div>
-                         
-                        <ul class="ah-actions actions">
-                            <li>
-                                <a href="">
-                                    <i class="fa fa-trash"></i>
-                                </a>
+                         <!-- Icons List -->
+                        <ul class="ah-actions actions" id="icons">
+                            <li class="deleteIcon">
+                                <i class="fa fa-trash" data-toggle="modal" data-target="#chatDeleteModal"></i> 
+                                
+                            </li>
+                            <li class="editIcon">
+                                <i class="fa fa-edit" data-toggle="modal" data-target="#editChatModel" ></i>
+                                
                             </li>
                             <li>
-                                <a href="">
-                                    <i class="fa fa-check"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="">
+                                
                                     <i class="fa fa-clock-o"></i>
-                                </a>
+                                
                             </li>
                             <li class="dropdown">
-                                <a href="" data-toggle="dropdown" aria-expanded="true">
+                                <a  data-toggle="dropdown" aria-expanded="true">
                                     <i class="fa fa-sort"></i>
                                 </a>
                     
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li>
-                                        <a href="">Latest</a>
+                                        Latest
                                     </li>
                                     <li>
-                                        <a href="">Oldest</a>
+                                        Oldest
                                     </li>
                                 </ul>
                             </li>                             
@@ -157,6 +155,55 @@
                
             </div>
         </div>
+<!-- Modal -->
+<div class="modal fade" id="chatDeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Delete Message</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h4>Confirm First if you want to Delete this message?</h4>
+          <p>Below is the message you want to delete?</p>
+          <h6 id="delete-message"></h6>
+        </div>
+        <div class="modal-footer">
+        
+          <button type="button" class="btn btn-danger">Delete Message</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Edit/Update Chat Model -->
+<!-- Modal -->
+<div class="modal fade" id="editChatModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Update Message</h5>
+          <button type="button" class="close editClose" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <input type="text" placeholder="Enter Your Message" id="update-text" >          
+        </div>
+        <div class="modal-footer">
+        
+          <button type="button" class="btn btn-primary updateBtn">Update Message</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+
+
         <script src="dashScript.js"></script>
         <script>
 
@@ -230,15 +277,17 @@
                     let minutes = currentDate.getMinutes();
 
                     console.log(chat)
-
+                    
+                    // Current User
                     let html = `
-                    <div class="message-feed right">
+                    <div class="message-feed right" id = "`+res.data._id+`">
                         <div class="pull-right">
                             <img src="Images/<%= user.userImage %>" alt="" class="img-avatar">
                         </div>
                         <div class="media-body">
                             <div class="mf-content">
-                                `+chat+`
+                                <span>`+chat+`</span>
+                                <i class='fas fa-angle-double-down' style='font-size:18px' data-id = "`+res.data._id+`"   ></i>
                             </div>
                             <small class="mf-date"><i class="fa fa-clock-o"></i> `+date+`/`+month+`/`+year+` at `+hour+`:`+minutes+`</small>
                         </div>
@@ -271,13 +320,13 @@
             let hour = currentDate.getHours()%12;
             let minutes = currentDate.getMinutes();
             let html = `
-            <div class="message-feed media">
+            <div class="message-feed media" id = "`+data._id+`" >
                         <div class="pull-left">
                             <img src="`+clickedUserImage+`" alt="" class="img-avatar">
                         </div>
                         <div class="media-body">
                             <div class="mf-content">
-                                `+chat+`
+                                <span>`+chat+`</span>
                             </div>
                             <small class="mf-date"><i class="fa fa-clock-o"></i> `+date+`/`+month+`/`+year+` at `+hour+`:`+minutes+`</small>
                         </div>
@@ -328,16 +377,22 @@
                     classTwo = "pull-left";
                     imageLink = clickedUserImage;
                 }
-               
+                //Load Old Chat...    
                 html += `
-                <div class="message-feed `+classOne+`">
+                <div class="message-feed `+classOne+`" id = "`+chats[i]['_id']+`" >
                         <div class="`+classTwo+`">
                             <img src="`+imageLink+`" alt="" class="img-avatar">
                         </div>
                         <div class="media-body">
                             <div class="mf-content">
-                                `+chats[i]['message']+`
-                            </div>
+                                
+                                <span>`+chats[i]['message']+`</span>`;
+                                if(chats[i]['senderId'] == senderId){
+                                    html += `<i class='fas fa-angle-double-down' style='font-size:18px' data-id = "`+chats[i]['_id']+`"  ></i>`
+
+                                }
+                                
+                           html += ` </div>
                             <small class="mf-date"><i class="fa fa-clock-o"></i> `+date+`/`+month+`/`+year+` at `+hour+`:`+minutes+`</small>
                         </div>
                     </div>
@@ -351,14 +406,135 @@
         
         })
 
-
+        // scroll chat
         function scrollChat(){
             const msgContainer = document.getElementById('msgContainer');
             msgContainer.scrollTop = msgContainer.offsetTop + msgContainer.scrollHeight;
         }
-         
+
+        // Delete Chat Functionality
+
+        // Icons List
+        let icons = document.getElementById('icons');
+        // close button
+        let closeBtn = document.querySelector('.close');
+
+        closeBtn.addEventListener('click',()=>{
+            console.log(closeBtn)
+            icons.style.display = "none"
+        })
+
+        let deleteIcon = document.querySelector('.deleteIcon')
+        document.addEventListener('click',(event)=>{
+            if(event.target.classList.contains('fa-angle-double-down')){
+                icons.style.display = "block";
+                let msg = event.target.parentNode.innerText;
+                // console.log(msg)
+                let msgId = event.target.getAttribute('data-id');
+
+                deleteIcon.addEventListener('click',()=>{
+
+                    let msgElem = document.getElementById('delete-message')
+                    msgElem.textContent = msg;
+
+                    let deleteBtn = document.querySelector('.btn-danger');
+
+                    deleteBtn.addEventListener('click',()=>{
+
+                        fetch('/delete-chat',{
+                            method : "DELETE",
+                            headers:{
+                                "Accept":"application/json",
+                                "Content-type":"application/json"
+                            },
+                            body:JSON.stringify({
+                                msgId
+                            })
+                        }).then(async response =>{
+                            let res = await response.json();
+                            if(res.success){
+                                
+                                const removeMsg = document.getElementById(msgId);
+                                removeMsg.parentNode.removeChild(removeMsg);
+                                // Now for real time delete on both side we have to use sockets
+
+                                socket.emit("chatDeleted",msgId)
+                            }
+                        })
+                    })
+                })   
+            }
+        })
+        
+
+            // Delete chat Sockets
+
+            socket.on('newChatDelete',(msgId)=>{
+                const removeMsg = document.getElementById(msgId);
+                removeMsg.parentNode.removeChild(removeMsg);
+
+            })
+        
+            // Update Chat Functionality
+
+            let editClose = document.querySelector('.editClose');
+
+            editClose.addEventListener('click',()=>{
+                    console.log(closeBtn)
+                    icons.style.display = "none"
+                })
+
+            let editIcon = document.querySelector('.editIcon')
+            document.addEventListener('click',(event)=>{
+            if(event.target.classList.contains('fa-angle-double-down')){
+                icons.style.display = "block";
+                let msg = event.target.parentNode.innerText; //old Message
+                
+                let msgId = event.target.getAttribute('data-id');
+
+                editIcon.addEventListener('click',()=>{
+
+                    let msgElem = document.getElementById('update-text')
+                    msgElem.value = msg;
+
+                    let updateBtn = document.querySelector('.updateBtn');
+
+                    updateBtn.addEventListener('click',()=>{
+                        let message = msgElem.value; //Our updated Message
+                        fetch('/update-chat',{
+                            method : "PUT",
+                            headers:{
+                                "Accept":"application/json",
+                                "Content-type":"application/json"
+                            },
+                            body:JSON.stringify({
+                                msgId,
+                                message
+                            })
+                        }).then(async response =>{
+                            let res = await response.json();
+                            if(res.success){
+                                // Updating the message
+                                document.getElementById(msgId).querySelector('span').innerText = message
+                                
+                                // Now for real time delete on both side we have to use sockets
+
+                                socket.emit("updatedChat",{msgId,message})
+                            }
+                        })
+                    })
+                })   
+            }
+        })
 
 
+            // Update Chat Socket frontend
+
+            socket.on('newUpdateChat',(data)=>{
+                document.getElementById(data.msgId).querySelector('span').innerText = data.message
+                    
+            })
+        
       
             // Updating status of "online" users
 
@@ -375,18 +551,6 @@
                 $('#'+data.userId+'-status').addClass("offline-status");
                 $('#'+data.userId+'-status').removeClass("online-status");
             })
-
-
-
-
-
-
-
-
-
-
-
-
         </script>
 	</body>
 </html>

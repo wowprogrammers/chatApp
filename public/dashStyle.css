@@ -230,3 +230,18 @@ body {
     height: 400px;
     overflow-y:scroll ;
 }
+
+.fa-angle-double-down{
+    cursor: pointer;
+}
+/* Icons List */
+.ah-actions{
+    display: none;
+}
+
+.deleteIcon{
+    cursor: pointer;
+}
+.editIcon{
+    cursor: pointer;
+}
