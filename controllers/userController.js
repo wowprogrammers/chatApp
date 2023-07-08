@@ -4,7 +4,7 @@ const User = require('../models/userModel');
 const Chat = require('../models/chatModel')
 const bcrypt = require('bcrypt');
 
-// Loading the registeration page
+// Loading the registration page
 
 const registerPage = async(req,res) =>{
     try {
@@ -29,7 +29,7 @@ const register = async(req,res)=>{
         const savedUser = await user.save(); 
         if(savedUser){
             res.render('login' ,{
-                message:"You Are registerd Successfully"
+                register:"You Are registerd Successfully..."
             })
         } 
         
@@ -58,7 +58,8 @@ const login = async(req,res) =>{
             const passwordMatch = await bcrypt.compare(password,userData.password);
             if(passwordMatch){
                 req.session.user = userData;
-                res.redirect('/dashboard')
+                
+                res.redirect('/dashboard');
             }else{
                 res.render('login', {message:"Invalid email or password"})
             } 
@@ -73,7 +74,7 @@ const login = async(req,res) =>{
 
 const loadDashBoardPage = async(req,res) =>{
     try{
-        const allUsers = await User.find({_id : {$nin:[req.session.user._id]}})
+        const allUsers = await User.find({_id : {$nin:[req.session.user._id]}});
         res.render('dashboard' , {user:req.session.user,allUsers})
         
     }catch{

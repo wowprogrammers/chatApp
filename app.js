@@ -1,5 +1,3 @@
-console.log("Welcome coder dost family!!!")
-
 // Importing all Packages 
 const express = require("express");
 const app = express();

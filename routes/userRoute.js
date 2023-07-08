@@ -19,7 +19,7 @@ userRoute.post('/register',upload.single('userImage'),userController.register)
 userRoute.get("/login",auth.isLogout,userController.loadLoginPage)
 
 // Login Implementation
- 
+  
 userRoute.post('/login',userController.login)
 
 // Loading the dashboard Page
