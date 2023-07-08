@@ -20,7 +20,7 @@ const fileFilter = (req,file,cb) =>{
     }
 
     const fileSize = parseInt(req.headers['content-length']);
-    if(fileSize > 10485766){ //1MB
+    if(fileSize > 5242880){ //1MB
         return cb("Your file Size  Cross the limit")
 
     }
