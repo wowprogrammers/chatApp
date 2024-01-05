@@ -18,7 +18,7 @@ app.use(express.static("./uploadFiles"))
 
 // Configure template engine "ejs"
 app.set('view engine',"ejs");
-app.set('views','./views') 
+app.set('views','./views')  
 
 // Configure body parser
 app.use(bodyParser.json());
@@ -51,6 +51,7 @@ userSpace.on('connection', async function(socketId){
     // Chat implementation
     // Event listen
     socketId.on('newChat',(data)=>{
+        console.log(data.message)
         socketId.broadcast.emit('loadNewChat',data); //New Event Fire(broadcast)
     })
 
@@ -78,18 +79,9 @@ userSpace.on('connection', async function(socketId){
 
     socketId.on("updatedChat",(data)=>{
         socketId.broadcast.emit("newUpdateChat",data)
-    })
+    }) 
   
 })
-
-
-
-
-
-
-
-
-
 
 // Creating Server
 const port = process.env.PORT || 8000
